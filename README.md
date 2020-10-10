@@ -2,6 +2,8 @@
 
 Negative Nancy's expression generator & parser! XD
 
+Write grammars, generate random expressions, parse expressions.
+
 ## Installation
 
 ```bash
