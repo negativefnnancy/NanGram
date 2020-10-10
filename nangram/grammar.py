@@ -43,8 +43,11 @@ class Grammar:
     def parse_bnf(cls, source: str):
         """Return a grammar described by a given BNF source string."""
 
+        # TODO: maybe extract this grammar out so that it doesnt have to be rebuild everytime?
+
         # create the BNF grammar itself
         bnf = Grammar({
+            # TODO: do a proper string contents
             'string_contents':     Repetition(Choice([Terminal(char) for char in string.ascii_letters + string.digits + '\\ '])),
             'optional_whitespace': Repetition(Choice([Terminal(char) for char in string.whitespace]), generation_override=' '),
 
