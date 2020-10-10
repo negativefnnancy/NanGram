@@ -47,6 +47,8 @@ class Grammar:
 
         # TODO: maybe extract this grammar out so that it doesnt have to be rebuild everytime?
 
+        # TODO: support for comments and import statements
+
         # create the BNF grammar itself
         bnf = Grammar({
             # TODO: do a proper string contents
