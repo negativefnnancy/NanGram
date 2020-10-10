@@ -1,0 +1,20 @@
+name              = "Stella" | "Nancy" .
+noun              = "cat" | "dog" | "couch" | "potato" | "orange" | "lamp" .
+transitive_verb   = "is" | "loves" | "eats" | "encourages" | "pets" | "nuzzles" | "kisses" | "hugs" .
+intransitive_verb = "laughs" | "dances" | "chuckles" .
+adjective         = "green" | "fluffy" | "cute" | "sweet" | "soft" | "friendly" | "lovely" | "amazing" .
+determiner        = "a" | "the" | "this" | "that" | "my" | "her" .
+
+whitespace_character = " " | "\n" | "\t" | "\r" | "\v" | "\f" .
+whitespace " " = whitespace_character { whitespace_character } .
+
+sentence    = np:noun_phrase whitespace vp:verb_phrase .
+noun_phrase = det:determiner whitespace nom:nominal
+            | name:name
+            .
+nominal     = [adj:adjective whitespace] noun:noun .
+verb_phrase = verb:transitive_verb whitespace np:noun_phrase
+            | verb:intransitive_verb
+            .
+
+main = sentence .
