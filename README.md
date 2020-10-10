@@ -19,7 +19,7 @@ First write yourself a nice little grammar like this!:
 determiner = "the " | "a " .
 noun = "cat " | "dog " | "chair " .
 verb = "runs " | "snacks " | "plays " .
-adverb = "quickly " | "ferociously " | "sneakily " .
+adverb = "quickly" | "ferociously" | "sneakily" .
 
 noun_phrase = determiner noun .
 verb_phrase = verb adverb .
@@ -59,20 +59,20 @@ a chair plays ferociously
 Then try parsing something:
 
 ```python
-for parse_tree in grammar.parse('a cat snacks sneakily '):
+for parse_tree in grammar.parse('a cat snacks sneakily'):
     print(parse_tree)
 ```
 
 And you get...
 
 ```
-sentence = 'a cat snacks sneakily '
+sentence = 'a cat snacks sneakily'
 ├ noun_phrase = 'a cat '
 │ ├ determiner = 'a '
 │ └ noun = 'cat '
-└ verb_phrase = 'snacks sneakily '
+└ verb_phrase = 'snacks sneakily'
   ├ verb = 'snacks '
-  └ adverb = 'sneakily '
+  └ adverb = 'sneakily'
 ```
 
 (The parser will yield as many parse trees as are valid, so if you have an ambiguous grammar, for example, you can parse all variations. If the expression is not in the language, you won't get any parse trees.)
