@@ -29,6 +29,8 @@ class Grammar:
     def parse(self, string: str, rule_name: str = 'main', verbose: bool = False):
         """Generate all possible parse trees matching a string according to a rule in the grammar."""
 
+        # TODO: figure out a system for reporting likely syntax errors?
+
         if verbose:
             print(f'Parsing with starting rule {rule_name!r}:')
 

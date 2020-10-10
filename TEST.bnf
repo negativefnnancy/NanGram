@@ -1,0 +1,11 @@
+
+determiner = "the " | "a " .
+noun = "cat " | "dog " | "chair " .
+verb = "runs " | "snacks " | "plays " .
+adverb = "quickly " | "ferociously " | "sneakily " .
+
+noun_phrase = determiner noun .
+verb_phrase = verb adverb .
+sentence = noun_phrase verb_phrase .
+
+main = sentence .
