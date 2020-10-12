@@ -1,9 +1,13 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from itertools import product, count, chain, repeat
+from itertools import product, count, repeat
+import string
+import random
 from .node import Node
 from .util import *
+
+# TODO: verbosity in parsing methods?
 
 @dataclass
 class Element(ABC):
@@ -87,11 +91,7 @@ class Substitution(Element):
     def parse(self, grammar: Grammar, rule: str, string: str, position: int = 0, verbose: bool = False):
         """Parse the non-terminal."""
 
-        for node in grammar.rules[self.name].parse(grammar, self.name, string, position, verbose):
-            if self.label:
-                yield Node(grammar, rule, string, node.region, [node], label=self.label)
-            else:
-                yield node
+        return label_node(grammar.rules[self.name].parse(grammar, self.name, string, position, verbose), self.label)
 
     def __str__(self):
         label = f'{self.label}:' if self.label else ''
@@ -117,11 +117,7 @@ class Sequence(Element):
     def parse(self, grammar: Grammar, rule: str, string: str, position: int = 0, verbose: bool = False):
         """Parse the sequence."""
 
-        for node in parse_sequence(self.elements, grammar, rule, string, position, verbose):
-            if self.label:
-                yield Node(grammar, rule, string, node.region, [node], label=self.label)
-            else:
-                yield node
+        return label_node(parse_sequence(self.elements, grammar, rule, string, position, verbose), self.label)
 
     def __str__(self):
         return ' '.join(map(str, self.elements))
@@ -148,11 +144,7 @@ class Choice(Element):
     def parse(self, grammar: Grammar, rule: str, string: str, position: int = 0, verbose: bool = False):
         """Parse the choice."""
 
-        for node in chain(*(element.parse(grammar, rule, string, position, verbose) for element in self.elements)):
-            if self.label:
-                yield Node(grammar, rule, string, node.region, [node], label=self.label)
-            else:
-                yield node
+        return label_node(parse_choice(self.elements, grammar, rule, string, position, verbose), self.label)
 
     def __str__(self):
         return ' | '.join(map(str, self.elements))
@@ -180,11 +172,8 @@ class Option(Element):
         """Parse the optional element."""
 
         yield Node(grammar, rule, string, slice(position, position), label=self.label)
-        for node in self.element.parse(grammar, rule, string, position, verbose):
-            if self.label:
-                yield Node(grammar, rule, string, node.region, [node], label=self.label)
-            else:
-                yield node
+        for node in label_node(self.element.parse(grammar, rule, string, position, verbose), self.label):
+            yield node
                 
     def __str__(self):
         return f'[ {self.element} ]'
@@ -229,3 +218,43 @@ class Repetition(Element):
     def __str__(self):
         return f'{{ {self.element} }}'
 
+@dataclass
+class StringLiteralCharacter(Element):
+    """Specialized element that accepts literal string characters.
+
+    This includes all unicode characters, excludes the unescaped string delimiter ("), escape character (\), and includes all escaped characters.
+    """
+
+    generation_override: str = None
+    label: str = None
+
+    delimiter: str = '"'
+    escape_character: str = '\\'
+
+    def escape(self, string: str) -> str:
+        """Escape every character in a given string."""
+
+        return ''.join([self.escape_character + c for c in string])
+
+    def generate(self, grammar: Grammar, depth: int = 0, verbose: bool = False):
+        """Generate the character."""
+
+        characters = list(string.printable)
+        characters[characters.index(self.escape_character)] = self.escape(self.escape_character)
+        characters[characters.index(self.delimiter)] = self.escape(self.delimiter)
+        # TODO: maybe add some common escape sequences?
+        return random.choice(characters)
+
+    def parse(self, grammar: Grammar, rule: str, string: str, position: int = 0, verbose: bool = False):
+        """Parse the character."""
+
+        character = string[position]
+        region = None
+        if character == self.escape_character:
+            region = slice(position + 1, position + 2)
+        elif character != self.delimiter:
+            region = slice(position, position + 1)
+        if region:
+            yield Node(grammar, rule, string, region, label=self.label)
+
+    # NOTE: there is no __str__ because this is a special element that is only used internally (for now lol)

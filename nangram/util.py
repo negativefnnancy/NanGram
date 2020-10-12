@@ -1,5 +1,5 @@
 from __future__ import annotations
-from itertools import product
+from itertools import product, chain
 from functools import reduce
 import random
 import operator
@@ -35,8 +35,22 @@ def make_padding(indent: int) -> str:
 
     return '   ' * indent
 
+def label_node(sequence, label: str = None):
+    """Optionally wrap all yielded nodes with a label node if provided."""
+
+    for node in sequence:
+        if label:
+            yield Node(node.grammar, node.rule, node.string, node.region, [node], label=label)
+        else:
+            yield node
+
+def parse_choice(elements: list, grammar: Grammar, rule: str, string, position: int = 0, verbose: bool = False):
+    """Parse a choice among elements."""
+
+    return chain(*(element.parse(grammar, rule, string, position, verbose) for element in elements))
+
 def parse_sequence(elements: list, grammar: Grammar, rule: str, string, position: int = 0, verbose: bool = False):
-    """Parse a sequence."""
+    """Parse a sequence of elements."""
 
     def sequential_choices(elements: list, position: int) -> list:
         if elements:

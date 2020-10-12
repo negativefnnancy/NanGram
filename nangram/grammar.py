@@ -46,13 +46,12 @@ class Grammar:
         """Return a grammar described by a given BNF source string."""
 
         # TODO: maybe extract this grammar out so that it doesnt have to be rebuild everytime?
-
         # TODO: support for comments and import statements
+        # TODO: support for convenience elements (whitespace, string literals, numbers, etc)
 
         # create the BNF grammar itself
         bnf = Grammar({
-            # TODO: do a proper string contents
-            'string_contents':     Repetition(Choice([Terminal(char) for char in string.ascii_letters + string.digits + '\\ '])),
+            'string_contents':     Repetition(StringLiteralCharacter()),
             'optional_whitespace': Repetition(Choice([Terminal(char) for char in string.whitespace]), generation_override=' '),
 
             # identifier names can contain alphanumeric characters and underscores but must not start with a number

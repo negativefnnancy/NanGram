@@ -40,7 +40,10 @@ class Node:
     def parsed_string(self) -> str:
         """Return the piece of string that was parsed by this node as a whole."""
 
-        return self.string[self.region]
+        if self.children:
+            return ''.join([child.parsed_string for child in self.children])
+        else:
+            return self.string[self.region]
 
     @property
     def is_empty(self) -> bool:
@@ -56,9 +59,9 @@ class Node:
 
     @property
     def is_complete(self) -> bool:
-        """Whether this node matches the whole string."""
+        """Whether this node spans the whole string."""
 
-        return self.string == self.parsed_string
+        return self.region.start == 0 and self.region.stop == len(self.string)
 
     @property
     def filtered_children(self) -> list:
