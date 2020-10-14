@@ -69,7 +69,7 @@ class Grammar:
             'repetition': Sequence([Terminal('{'), Substitution('optional_whitespace'), Substitution('expression', label='expression'), Substitution('optional_whitespace'), Terminal('}')]),
             'option':     Sequence([Terminal('['), Substitution('optional_whitespace'), Substitution('expression', label='expression'), Substitution('optional_whitespace'), Terminal(']')]),
             'item':       Sequence([Option(Sequence([Substitution('identifier', label='label'), Substitution('optional_whitespace'), Terminal(':'), Substitution('optional_whitespace')])), Choice([Substitution('string'), Substitution('identifier'), Substitution('option'), Substitution('repetition')], label='contents')]),
-            'sequence':   Sequence([Substitution('item', label='item'), Repetition(Sequence([Choice([Terminal(char) for char in string.whitespace], generation_override=' '), Substitution('item', label='item')]))]),
+            'sequence':   Sequence([Substitution('item', label='item'), Repetition(Sequence([Choice([Terminal(char) for char in string.whitespace], generation_override=' '), Substitution('optional_whitespace', generation_override=''), Substitution('item', label='item')]))]),
             'expression': Sequence([Substitution('sequence', label='choice'), Repetition(Sequence([Substitution('optional_whitespace'), Terminal('|'), Substitution('optional_whitespace'), Substitution('sequence', label='choice')]))]),
 
             # bnf script is sequence of production rules

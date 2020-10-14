@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='nangram',
-    version='0.0.2',
+    version='0.0.4',
     author='Negative Nancy',
     author_email='negativefnnancy@gmail.com',
     description='Small little context-free expression generator and parser using user provided EBNF-like source.',
