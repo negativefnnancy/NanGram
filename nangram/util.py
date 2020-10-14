@@ -1,5 +1,5 @@
 from __future__ import annotations
-from itertools import product, chain
+from itertools import product, chain, islice
 from functools import reduce
 import random
 import operator
@@ -29,6 +29,17 @@ def random_sample(sequence_func, n: int, length: int = None):
     for i, item in enumerate(sequence_func()):
         if i in indices:
             yield item
+
+def random_choice(sequence_func, length: int = None):
+    """Specialized function to return a random item from a sequence, which may be a generator.
+
+    sequence_func is a function to return the sequence.
+    """
+
+    # the predeturmined indices of the items to collect
+    length = length or get_length(sequence_func())
+    index = random.choice(range(length))
+    return next(islice(iter(sequence_func()), index))
 
 def make_padding(indent: int) -> str:
     """Make a left-side whitespace padding for a given indention level."""
