@@ -39,7 +39,7 @@ def random_choice(sequence_func, length: int = None):
     # the predeturmined indices of the items to collect
     length = length or get_length(sequence_func())
     index = random.choice(range(length))
-    return next(islice(iter(sequence_func()), index))
+    return next(islice(iter(sequence_func()), index, None))
 
 def make_padding(indent: int) -> str:
     """Make a left-side whitespace padding for a given indention level."""
